@@ -43,9 +43,7 @@ Clipora is a powerful backend service that automatically generates engaging shor
 
 4. **Start the server**
    ```bash
-   npm start
-   # For development with auto-reload:
-   npm run dev
+    node server.js
    ```
 
 ## 🛠️ API Documentation
