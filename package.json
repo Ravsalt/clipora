@@ -1,5 +1,5 @@
 {
-  "name": "youtube-shorts-maker",
+  "name": "clipora",
   "version": "1.0.0",
   "description": "API for generating YouTube Shorts with AI narration",
   "main": "server.js",
