@@ -8,6 +8,11 @@ const stream = require('stream');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+// Add this at the top of server.js
+const os = require('os');
+
+process.env.FFMPEG_PATH = '/usr/bin/ffmpeg';
 // Import our existing functions
 const { 
   generateShortTitle, 
@@ -133,6 +138,10 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+
+// Add this before starting the server
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 // Start server
 app.listen(PORT, () => {
