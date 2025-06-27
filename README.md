@@ -33,8 +33,6 @@ Clipora is a powerful backend service that automatically generates engaging shor
 2. **Install dependencies**
    ```bash
    npm install
-   # or
-   yarn
    ```
 
 3. **Add video templates**
