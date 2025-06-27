@@ -23,21 +23,89 @@ Clipora is a powerful backend service that automatically generates engaging shor
 
 ### Option 1: Using Docker (Recommended)
 
-1. **Clone the repository**
+1. **Install Docker**
+   - Make sure you have Docker and Docker Compose installed
+   - Add your user to the docker group to avoid permission issues:
+     ```bash
+     sudo usermod -aG docker $USER
+     newgrp docker
+     ```
+
+2. **Clone the repository**
    ```bash
    git clone https://github.com/Ravsalt/clipora.git
    cd clipora
    ```
 
-2. **Add video templates**
+3. **Add video templates**
    - Place your video templates in the `templates` directory
    - Name them following the pattern `short_*.mp4` (e.g., `short_01.mp4`)
 
-3. **Build and start the container**
+### 🐳 Docker Commands
+
+#### Build the image
+```bash
+# Using docker-compose
+docker-compose build
+
+# Or using docker directly
+docker build -t clipora .
+```
+
+#### Start the container
+```bash
+# Using docker-compose (recommended)
+docker-compose up -d
+
+# Or using docker directly
+docker run -d \
+  --name clipora \
+  -p 3000:3000 \
+  -v $(pwd)/templates:/app/templates \
+  -v $(pwd)/generated:/app/generated \
+  clipora
+```
+
+#### View logs
+```bash
+# Using docker-compose
+docker-compose logs -f
+
+# Or using docker directly
+docker logs -f clipora
+```
+
+#### Stop the container
+```bash
+# Using docker-compose
+docker-compose down
+
+# Or using docker directly
+docker stop clipora
+docker rm clipora
+```
+
+#### Common Issues
+
+1. **Permission denied** when running docker commands:
    ```bash
-   docker-compose up -d --build
+   # Add your user to the docker group
+   sudo usermod -aG docker $USER
+   newgrp docker
    ```
-   The API will be available at `http://localhost:3000`
+
+2. **Port already in use**: Make sure no other service is using port 3000
+   ```bash
+   # Find and stop the process using port 3000
+   sudo lsof -i :3000
+   kill <PID>
+   ```
+
+3. **Container fails to start**: Check the logs for errors
+   ```bash
+   docker logs clipora
+   ```
+   You should see the `clipora` container in the list of running containers.
 
 ### Option 2: Local Development
 

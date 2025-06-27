@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  clipora:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
