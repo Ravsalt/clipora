@@ -1,6 +1,6 @@
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsp = require('fs').promises;
 const path = require('path');
-const { globby } = require('globby');
 const ffmpeg = require('fluent-ffmpeg');
 const axios = require('axios');
 const { promisify } = require('util');
@@ -76,8 +76,8 @@ async function synthesizeSpeech(topic, outputPath) {
     
     if (response.status === 200 && response.data && response.data.length > 0) {
       const outputDir = path.dirname(outputPath);
-      await fs.mkdir(outputDir, { recursive: true });
-      await fs.writeFile(outputPath, response.data);
+      await fsp.mkdir(outputDir, { recursive: true });
+      await fsp.writeFile(outputPath, response.data);
       console.log(`Audio size: ${(response.data.length / 1024).toFixed(2)} KB`);
       return true;
     } else {
@@ -110,18 +110,43 @@ async function synthesizeSpeech(topic, outputPath) {
   }
 }
 
-// Get a random gameplay clip
+// Get a random gameplay clip from GitHub
 async function getRandomGameplayClip() {
-  const pattern = path.join(CONFIG.TEMPLATE_FOLDER, CONFIG.GAMEPLAY_PATTERN);
-  const files = await globby(pattern, { absolute: false });
-  
-  if (files.length === 0) {
-    throw new Error(`No gameplay templates found in '${CONFIG.TEMPLATE_FOLDER}/'`);
+  try {
+    // Generate a random number between 1 and 10 (adjust range as needed)
+    const randomNum = Math.floor(Math.random() * 42) + 1;
+    const videoUrl = `https://github.com/Ravsalt/clipora/raw/refs/heads/main/templates/short_${randomNum}.mp4`;
+    
+    // Create temp directory if it doesn't exist
+    const tempDir = path.join(process.cwd(), 'temp');
+    await fsp.mkdir(tempDir, { recursive: true });
+    
+    // Download the video
+    const response = await axios({
+      method: 'GET',
+      url: videoUrl,
+      responseType: 'stream'
+    });
+    
+    // Save to temp file
+    const tempFilePath = path.join(tempDir, `short_${randomNum}.mp4`);
+    const writer = fs.createWriteStream(tempFilePath);
+    
+    response.data.pipe(writer);
+    
+    // Wait for download to complete
+    await new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+    
+    console.log(`Downloaded gameplay clip: ${videoUrl} to ${tempFilePath}`);
+    return tempFilePath;
+    
+  } catch (error) {
+    console.error('Error downloading video:', error.message);
+    throw new Error(`Failed to download video: ${error.message}`);
   }
-  
-  const randomFile = files[Math.floor(Math.random() * files.length)];
-  console.log(`Selected gameplay clip: ${randomFile}`);
-  return randomFile;
 }
 
 // Get video duration using ffprobe
