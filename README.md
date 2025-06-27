@@ -18,11 +18,28 @@ Clipora is a powerful backend service that automatically generates engaging shor
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 16+
-- FFmpeg
-- npm or yarn
+- Docker and Docker Compose (recommended)
+- OR Node.js 16+ and FFmpeg for local development
 
-### Installation
+### Option 1: Using Docker (Recommended)
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Ravsalt/clipora.git
+   cd clipora
+   ```
+
+2. **Add video templates**
+   - Place your video templates in the `templates` directory
+   - Name them following the pattern `short_*.mp4` (e.g., `short_01.mp4`)
+
+3. **Build and start the container**
+   ```bash
+   docker-compose up -d --build
+   ```
+   The API will be available at `http://localhost:3000`
+
+### Option 2: Local Development
 
 1. **Clone the repository**
    ```bash
@@ -41,7 +58,7 @@ Clipora is a powerful backend service that automatically generates engaging shor
 
 4. **Start the server**
    ```bash
-    node server.js
+   node server.js
    ```
 
 ## 🛠️ API Documentation
