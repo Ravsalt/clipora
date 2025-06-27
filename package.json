@@ -1,5 +1,5 @@
 {
-  "name": "youtube-shorts-maker",
+  "name": "clipora",
   "version": "1.0.0",
   "description": "API for generating YouTube Shorts with AI narration",
   "main": "server.js",
@@ -8,7 +8,13 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["youtube", "shorts", "video", "ai", "tts"],
+  "keywords": [
+    "youtube",
+    "shorts",
+    "video",
+    "ai",
+    "tts"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -19,9 +25,9 @@
     "express": "^4.18.2",
     "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.3",
-    "globby": "^14.1.0",
     "prompts": "^2.4.2",
     "sanitize-filename": "^1.6.3",
+    "serverless-http": "^3.2.0",
     "uuid": "^9.0.1"
   }
 }
