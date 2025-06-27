@@ -7,7 +7,8 @@ RUN apk add --no-cache --update \
     python3 \
     make \
     g++ \
-    git
+    git \
+    wget
 
 # Create app directory and set working directory
 WORKDIR /app
@@ -18,8 +19,9 @@ COPY package*.json ./
 # Install app dependencies
 RUN npm ci --only=production
 
-# Copy app source code
+# Copy application code
 COPY . .
+
 
 # Create necessary directories with appropriate permissions
 RUN mkdir -p generated templates && \
