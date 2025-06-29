@@ -1,31 +1,41 @@
-name: 🔄 Clipora Uptime Monitor
+name: 🧠 Clipora API /health Monitor
 
 on:
   schedule:
-    - cron: "*/2 * * * *" # Every 2 minutes UTC
-  workflow_dispatch:       # Allows manual run from Actions tab
+    - cron: "*/2 * * * *" # Every 2 minutes
+  workflow_dispatch:       # Manual run for testing
 
 jobs:
-  check-clipora:
+  health-check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛰️ Curl Ping to Clipora
+      - name: 🚀 Curl + Validate JSON
         run: |
-          echo "🔥 Initiating status check to Clipora..."
+          echo "🔥 Checking Clipora /health endpoint..."
 
-          RESPONSE=$(curl --write-out "%{http_code}" \
-                          --silent \
-                          --output /dev/null \
-                          --user-agent "CliporaMonitor/1.0" \
-                          --max-time 15 \
-                          -L "https://clipora.onrender.com")
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+                          -H "Accept: application/json" \
+                          -H "User-Agent: CliporaMonitor/1.0" \
+                          --max-time 10 \
+                          https://clipora.onrender.com/health)
 
-          echo "📡 HTTP Response Code: $RESPONSE"
+          BODY=$(echo "$RESPONSE" | head -n 1)
+          STATUS=$(echo "$RESPONSE" | tail -n 1)
 
-          if [[ "$RESPONSE" -ne 200 ]]; then
-            echo "::error ::❌ Clipora is DOWN or redirected badly (HTTP $RESPONSE)"
+          echo "📡 HTTP Response Code: $STATUS"
+          echo "📦 Response Body: $BODY"
+
+          if [[ "$STATUS" -ne 200 ]]; then
+            echo "::error ::❌ API is DOWN — HTTP $STATUS"
+            exit 1
+          fi
+
+          echo "$BODY" | jq -e '.status == "ok"' > /dev/null
+
+          if [[ $? -ne 0 ]]; then
+            echo "::error ::❌ Health check failed — .status != 'ok'"
             exit 1
           else
-            echo "::notice ::✅ Clipora is UP and returned 200 OK"
+            echo "::notice ::✅ Clipora API is healthy"
           fi
