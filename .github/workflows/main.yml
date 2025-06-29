@@ -1,0 +1,31 @@
+name: 🔄 Clipora Uptime Monitor
+
+on:
+  schedule:
+    - cron: "*/2 * * * *" # Every 2 minutes UTC
+  workflow_dispatch:       # Allows manual run from Actions tab
+
+jobs:
+  check-clipora:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛰️ Curl Ping to Clipora
+        run: |
+          echo "🔥 Initiating status check to Clipora..."
+
+          RESPONSE=$(curl --write-out "%{http_code}" \
+                          --silent \
+                          --output /dev/null \
+                          --user-agent "CliporaMonitor/1.0" \
+                          --max-time 15 \
+                          -L "https://clipora.onrender.com")
+
+          echo "📡 HTTP Response Code: $RESPONSE"
+
+          if [[ "$RESPONSE" -ne 200 ]]; then
+            echo "::error ::❌ Clipora is DOWN or redirected badly (HTTP $RESPONSE)"
+            exit 1
+          else
+            echo "::notice ::✅ Clipora is UP and returned 200 OK"
+          fi
